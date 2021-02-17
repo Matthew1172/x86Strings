@@ -1,42 +1,74 @@
-    global _start		
-    section .text
+global _start		
+section .text
 
-    _start:     
-    mov eax, 4
-    mov ebx, 1
-    mov ecx, message
+_start: 
+;system call for write
+mov eax, 4
+;stdout
+mov ebx, 1
+;move address of string to print
+;into register ecx
+mov ecx, message
 
-    push eax
-    push ebx
-    ; store strlen in ebx
-    call _count
-    mov [result], ebx
-    mov edx, [result]
+;we need these 3 registers in _count
+;so we push them to the stack for later
+push eax
+push ebx
+push esi
 
-    pop ebx
-    pop eax
+;load address of string into esi
+;for _count function
+lea esi, [message]
+;_count will store strlen in ebx
+call _count
+;move the strlen from ebx into result
+mov [result], ebx
+;move result into edx for stdout
+mov edx, [result]
 
-    int 80h
+;pop each register used in _count
+;in reverse order
+pop esi
+pop ebx
+pop eax
 
-    exit:    
-    mov eax, 1
-    mov ebx, 0
-    int 80h
+;print to stdout
+int 80h
 
-    _count:     
-    xor eax, eax
-    mov ebx, 1
-    lea esi, [message]
-    myloop:
-    lodsb
-    cmp al, 0ah
-    je strlen_end
-    inc ebx
-    jmp myloop
-    strlen_end:
-    ret
+;walk into exit
+exit:
+mov eax, 1
+mov ebx, 0
+;return to bash
+int 80h
 
+;_count function requires the string
+;to count loaded into esi and will return
+;with the length of the string in ebx
+;using newline terminating string or 0a
+_count:
+;zero out eax
+xor eax, eax
+;start count of string to be 1
+;to include newline charater at end of string
+mov ebx, 1
+;start counting loop
+myloop:
+;load a string byte into eax from esi
+lodsb
+;compare the string byte with the newline ascii hex
+cmp al, 0ah
+;if they are equal, jump to return point
+je strlen_end
+;else, increment the count stored in ebx
+;then jump back to counting loop
+inc ebx
+jmp myloop
+strlen_end:
+ret
 
-    section .data
-    message: db "hello, world",0ah
-    result: resb 4
+section .data
+message: db "Matthew Pecko 23916868 32178",0ah
+
+section .bss
+result: resb 4
