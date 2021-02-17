@@ -19,10 +19,10 @@ push esi
 ;load address of string into esi
 ;for _count function
 lea esi, [message]
-;_count will store strlen in ebx
+;_count will store strlen in eax
 call _count
-;move the strlen from ebx into result
-mov [result], ebx
+;move the strlen from eax into result
+mov [result], eax
 ;move result into edx for stdout
 mov edx, [result]
 
@@ -65,6 +65,7 @@ je strlen_end
 inc ebx
 jmp myloop
 strlen_end:
+mov eax, ebx
 ret
 
 section .data
