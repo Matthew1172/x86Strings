@@ -10,15 +10,11 @@ mov ebx, 1
 ;into register ecx
 mov ecx, message
 
-;we need these 3 registers in _count
+;we need these 2 registers in _count
 ;so we push them to the stack for later
 push eax
 push ebx
-push esi
 
-;load address of string into esi
-;for _count function
-lea esi, [message]
 ;_count will store strlen in eax
 call _count
 ;move the strlen from eax into result
@@ -28,7 +24,6 @@ mov edx, [result]
 
 ;pop each register used in _count
 ;in reverse order
-pop esi
 pop ebx
 pop eax
 
@@ -47,11 +42,15 @@ int 80h
 ;with the length of the string in ebx
 ;using newline terminating string or 0a
 _count:
+push esi
 ;zero out eax
 xor eax, eax
 ;start count of string to be 1
 ;to include newline charater at end of string
 mov ebx, 1
+;load address of string into esi
+;for _count function
+lea esi, [message]
 ;start counting loop
 myloop:
 ;load a string byte into eax from esi
@@ -66,6 +65,7 @@ inc ebx
 jmp myloop
 strlen_end:
 mov eax, ebx
+pop esi
 ret
 
 section .data
