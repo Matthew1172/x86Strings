@@ -19,13 +19,13 @@ mov ebx, 1
 ;into register ecx
 mov ecx, message
 
-;we need these 2 registers in _count
+;we need these 2 registers
 ;so we push them to the stack for later
 push eax
 push ecx
+
 ;we pass the const char* string parameter on stack
 push message
-
 ;this function will store strlen in eax
 call _strlen
 ;remove string address from stack
@@ -36,8 +36,7 @@ mov [result], eax
 ;move result into edx for stdout
 mov edx, [result]
 
-;pop each register used in _count
-;in reverse order
+;pop each register used in reverse order
 pop ecx
 pop eax
 
